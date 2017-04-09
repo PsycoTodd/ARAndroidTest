@@ -43,7 +43,7 @@ public:
     void        RotateModel(float distanceX, float distanceY, float endPositionX, float endPositionY);
     void        ScaleModel(float scaleFactor);
     void        TranslateModel(float distanceX, float distanceY);
-    glm::mat4   GetMVPAlignedWithGravity(std::vector<float> gravity);
+    glm::mat4   GetMVPAlignedWithGravity(std::vector<float> gravity, glm::mat4& mvMat);
     void        AddDeltaRotation(glm::mat4 deltaRotationMat);
     std::vector<cv::Point3f> GetProjectedPointsOnFloor(std::vector<cv::Point2f> sourceKeypoints,
                                                        glm::vec3 sourceGravityVector,

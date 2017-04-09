@@ -164,7 +164,7 @@ void MyGLCamera::TranslateModel(float distanceX, float distanceY) {
 /**
  * Align MVP matrix along the gravity vector
  */
-glm::mat4 MyGLCamera::GetMVPAlignedWithGravity(std::vector<float> gravity) {
+glm::mat4 MyGLCamera::GetMVPAlignedWithGravity(std::vector<float> gravity, glm::mat4& mvMat) {
 
     // extract 3x3 rotation mat from model mat
     glm::mat3 currentRotationMat = glm::mat3(modelMat);
@@ -198,6 +198,7 @@ glm::mat4 MyGLCamera::GetMVPAlignedWithGravity(std::vector<float> gravity) {
 
     glm::quat q = glm::quat(glm::vec3(-1.57, 0, 0)); // Todd: need to rotate back
     glm::mat4 rotMat = glm::toMat4(q);
+    mvMat = viewMat * currentModelMat * rotMat;
     glm::mat4 newMvpMat = projectionViewMat * currentModelMat * rotMat;
     return newMvpMat;
 }

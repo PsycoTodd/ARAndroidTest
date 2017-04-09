@@ -16,7 +16,8 @@ public:
     Teapot();
     ~Teapot();
 
-    void Render(glm::mat4 *MVP);
+    void Render(glm::mat4 *MVP); // Render texture model.
+    void Render(glm::mat4 *mvpMat, glm::mat4 *mvMat); // Render lighting model
 private:
     void setVerts();
     void setTexCoords();
@@ -30,6 +31,8 @@ private:
     GLuint  _vertexAttribute, _vertexUVAttribute;     // attributes for shader variables
     GLuint  _shaderProgramID;
     GLint   _mvpLocation, _textureSamplerLocation;    // location of MVP in the shader
+
+    GLint   _mvLocation, _lightPos, _normalAttribute;
 
     int _verticesNumber;
     GLuint _vBuffer;

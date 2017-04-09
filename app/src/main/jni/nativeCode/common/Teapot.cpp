@@ -8,6 +8,7 @@
 #include <myJNIHelper.h>
 #include <string>
 
+//#define LIGHT_MODEL 1
 
 /**
  * Try to initialize our graphics resoruce and gl resources here.
@@ -20,8 +21,9 @@ Teapot::Teapot() {
     setTexCoords();
     setNorms();
     setIndices();
-
+#ifndef  LIGHT_MODEL
     LoadTexture();
+#endif
 
     CheckGLError("Teaport::Init");
     _loadSuccess = true;
@@ -41,6 +43,16 @@ Teapot::~Teapot()
 void
 Teapot::InitShaders(){
     // shader related setup -- loading, attribute and uniform locations
+#ifdef LIGHT_MODEL
+    std::string vertexShader    = "shaders/modelLight.vsh";
+    std::string fragmentShader  = "shaders/modelLight.fsh";
+    _shaderProgramID         = LoadShaders(vertexShader, fragmentShader);
+    _vertexAttribute         = GetAttributeLocation(_shaderProgramID, "vertexPosition");
+    _normalAttribute         = GetAttributeLocation(_shaderProgramID, "vertexNormal");
+    _mvpLocation             = GetUniformLocation(_shaderProgramID, "mvpMat");
+    _mvLocation              = GetUniformLocation(_shaderProgramID, "mvMat");
+    _lightPos                = GetUniformLocation(_shaderProgramID, "lightPos");
+#else
     std::string vertexShader    = "shaders/modelTextured.vsh";
     std::string fragmentShader  = "shaders/modelTextured.fsh";
     _shaderProgramID         = LoadShaders(vertexShader, fragmentShader);
@@ -48,6 +60,8 @@ Teapot::InitShaders(){
     _vertexUVAttribute       = GetAttributeLocation(_shaderProgramID, "vertexUV");
     _mvpLocation             = GetUniformLocation(_shaderProgramID, "mvpMat");
     _textureSamplerLocation  = GetUniformLocation(_shaderProgramID, "textureSampler");
+#endif
+
 }
 
 
@@ -100,6 +114,43 @@ std::string to_string(T value)
     return os.str() ;
 }
 
+void
+Teapot::Render(glm::mat4 *mvpMat, glm::mat4 *mvMat)
+{
+    if(_loadSuccess == false)
+    {
+        return;
+    }
+    glUseProgram(_shaderProgramID);
+    //Set our shader variables.
+    glUniformMatrix4fv(_mvpLocation, 1, GL_FALSE, (const GLfloat*) mvpMat);
+    glUniformMatrix4fv(_mvLocation, 1, GL_FALSE, (const GLfloat*)mvMat);
+    // Pass in the light position
+    glUniform3f(_lightPos, 0.0f, 1.0f, 1.0f);
+    CheckGLError("Teapot: light pos");
+    // 1. Indices buffer
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indBuffer);
+    CheckGLError("Teapot: 1");
+
+    // 2. Vertices buffer
+    glBindBuffer(GL_ARRAY_BUFFER, _vBuffer);
+    glEnableVertexAttribArray(_vertexAttribute);
+    glVertexAttribPointer(_vertexAttribute, 3, GL_FLOAT, 0, 0, 0);
+    CheckGLError("Teapot: 2");
+
+    // 3. normal
+    glBindBuffer(GL_ARRAY_BUFFER, _normalBuffer);
+    glEnableVertexAttribArray(_normalAttribute);
+    glVertexAttribPointer(_normalAttribute, 3, GL_FLOAT, 0, 0, 0);
+    CheckGLError("Teapot: 3");
+
+    glDrawElements(GL_TRIANGLES, _verticesNumber * 3, GL_UNSIGNED_INT, 0);
+    // Release the buffer.
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
+
 
 void
 Teapot::Render(glm::mat4 *mvpMat)
@@ -115,7 +166,6 @@ Teapot::Render(glm::mat4 *mvpMat)
     MyLOGD(to_string(TEAPOT_NORMS.size()).c_str() );
     MyLOGD(to_string(TEAPOT_VERTS.size()).c_str());
     */
-
     // Make sure we use the correct vertex and fragment shader.
     glUseProgram(_shaderProgramID);
     //Set our shader variables.
@@ -146,13 +196,11 @@ Teapot::Render(glm::mat4 *mvpMat)
     CheckGLError("Teapot: 4");
 
 
-    glDrawElements(GL_TRIANGLES, _verticesNumber, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, _verticesNumber * 3, GL_UNSIGNED_INT, 0);
 
     // Release the buffer.
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-
 
 }
 

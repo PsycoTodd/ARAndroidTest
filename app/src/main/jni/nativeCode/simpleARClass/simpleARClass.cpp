@@ -150,11 +150,15 @@ void SimpleARClass::Render() {
         myGLCamera->UpdateModelMat(translationVectorCopy, rotationVectorCopy, defaultModelPosition);
 
         gravityMutex.lock();
-        glm::mat4 mvpMat = myGLCamera->GetMVPAlignedWithGravity(gravity);
+        glm::mat4 mvMat;
+        glm::mat4 mvpMat = myGLCamera->GetMVPAlignedWithGravity(gravity, mvpMat);
         gravityMutex.unlock();
 
         if (renderModel) {
             //modelObject->Render3DModel(&mvpMat);
+#ifdef LIHGT_MODEL
+            myTeapot->Render(&mvpMat, &mvMat);
+#else
             myTeapot->Render(&mvpMat);
         } else {
 //            MyLOGD("***not rendering model***");
