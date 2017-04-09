@@ -9,6 +9,3 @@ A lot of challengs includes:
 5. Use opencv ORB feature extractor to find feature and resolve the transformation.
 
 The project will run on devices with ABI armeabi-v7a.
-
-The project is set up based on:
-http://www.anandmuralidhar.com
