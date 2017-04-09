@@ -20,7 +20,6 @@
 #include "myLogger.h"
 #include "myGLFunctions.h"
 #include "myGLCamera.h"
-#include "assimpLoader.h"
 #include <sstream>
 #include <iostream>
 #include <stdio.h>
@@ -83,9 +82,7 @@ private:
     std::vector <float> gravity;
     glm::vec3   sourceGravityVector;
 
-    std::vector <float> modelDefaultPosition;
     MyGLCamera  * myGLCamera;
-    AssimpLoader * modelObject;
     Teapot * myTeapot;
 
 };

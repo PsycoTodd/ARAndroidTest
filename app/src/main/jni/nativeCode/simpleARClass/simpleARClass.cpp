@@ -30,7 +30,6 @@ SimpleARClass::SimpleARClass() {
     cornerDetector = cv::ORB::create(750); // choosing ORB detector with default parameters
     matcher        = cv::DescriptorMatcher::create("BruteForce-Hamming");
 
-    modelObject = NULL;
     myTeapot = NULL;
 
     gravityMutex.unlock();
@@ -60,8 +59,8 @@ SimpleARClass::~SimpleARClass() {
     if (myGLCamera) {
         delete myGLCamera;
     }
-    if (modelObject) {
-        delete modelObject;
+    if (myTeapot) {
+        delete myTeapot;
     }
 }
 
@@ -80,22 +79,7 @@ void SimpleARClass::PerformGLInits() {
     back = new BackTexture(cameraPreviewWidth*previewScaleFactor,
                            cameraPreviewHeight*previewScaleFactor);
 
-    modelObject = new AssimpLoader();
-    myTeapot = new Teapot();
-
-    // extract the OBJ and companion files from assets
-    // its a long list since ourWorld.obj has 6 textures corresponding to faces of the cube
-    std::string objFilename, mtlFilename, texFilename;
-    bool isFilesPresent  =
-            gHelperObject->ExtractAssetReturnFilename("amenemhat/amenemhat.obj", objFilename) &&
-            gHelperObject->ExtractAssetReturnFilename("amenemhat/amenemhat.mtl", mtlFilename) &&
-            gHelperObject->ExtractAssetReturnFilename("amenemhat/amenemhat.jpg", texFilename);
-    if( !isFilesPresent ) {
-        MyLOGE("Model %s does not exist!", objFilename.c_str());
-        return;
-    }
-
-    modelObject->Load3DModel(objFilename);
+    myTeapot = new Teapot(); // Init and load the teapot.
 
     CheckGLError("SimpleARClass::PerformGLInits");
     newCameraImage = false;
@@ -160,6 +144,7 @@ void SimpleARClass::Render() {
             myTeapot->Render(&mvpMat, &mvMat);
 #else
             myTeapot->Render(&mvpMat);
+#endif
         } else {
 //            MyLOGD("***not rendering model***");
         }
