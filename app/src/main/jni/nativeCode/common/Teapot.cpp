@@ -11,12 +11,23 @@
 //#define LIGHT_MODEL 1
 
 /**
+ * Template for debugging purpose.
+ */
+template <typename T>
+std::string to_string(T value)
+{
+    std::ostringstream os ;
+    os << value ;
+    return os.str() ;
+}
+
+/**
  * Try to initialize our graphics resoruce and gl resources here.
  */
 Teapot::Teapot() {
     _loadSuccess = false;
+    _verticesNumber = TEAPOT_VERTS.size() / 3;
     InitShaders();
-
     setVerts();
     setTexCoords();
     setNorms();
@@ -106,14 +117,9 @@ Teapot::LoadTexture() {
 
 }
 
-template <typename T>
-std::string to_string(T value)
-{
-    std::ostringstream os ;
-    os << value ;
-    return os.str() ;
-}
-
+/**
+ * Render the teapot with lighting, need model view matrix also besides MVP.
+ */
 void
 Teapot::Render(glm::mat4 *mvpMat, glm::mat4 *mvMat)
 {
@@ -138,7 +144,7 @@ Teapot::Render(glm::mat4 *mvpMat, glm::mat4 *mvMat)
     glVertexAttribPointer(_vertexAttribute, 3, GL_FLOAT, 0, 0, 0);
     CheckGLError("Teapot: 2");
 
-    // 3. normal
+    // 3. Normal buffer
     glBindBuffer(GL_ARRAY_BUFFER, _normalBuffer);
     glEnableVertexAttribArray(_normalAttribute);
     glVertexAttribPointer(_normalAttribute, 3, GL_FLOAT, 0, 0, 0);
@@ -151,7 +157,10 @@ Teapot::Render(glm::mat4 *mvpMat, glm::mat4 *mvMat)
 }
 
 
-
+/**
+ * Main render function which we used to draw our teapot.
+ * mvpMat is used to update the model place.
+ */
 void
 Teapot::Render(glm::mat4 *mvpMat)
 {
@@ -209,8 +218,6 @@ Teapot::Render(glm::mat4 *mvpMat)
 void
 Teapot::setVerts()
 {
-    _verticesNumber = TEAPOT_VERTS.size() / 3;
-
     // Now we try to generate OpenGL buffer.
     GLuint buffer;
     glGenBuffers(1, &buffer);
@@ -249,7 +256,7 @@ Teapot::setIndices()
     GLuint buffer;
     glGenBuffers(1, &buffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * 3 * _verticesNumber, &TEAPOT_INDICES[0], GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * TEAPOT_INDICES.size(), &TEAPOT_INDICES[0], GL_STATIC_DRAW);
    _indBuffer = buffer;
 }
 
