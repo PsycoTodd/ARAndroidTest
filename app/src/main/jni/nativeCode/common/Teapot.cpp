@@ -202,7 +202,7 @@ Teapot::Render(glm::mat4 *mvpMat)
     // 4. UV
     glBindBuffer(GL_ARRAY_BUFFER, _uvBuffer);
     glEnableVertexAttribArray(_vertexUVAttribute);
-    glVertexAttribPointer(_vertexUVAttribute, 2, GL_FLOAT, 0, 0, 0);
+    glVertexAttribPointer(_vertexUVAttribute, 3, GL_FLOAT, 0, 0, 0);
     CheckGLError("Teapot: 4");
 
 
