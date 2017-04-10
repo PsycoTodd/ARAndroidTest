@@ -27,6 +27,7 @@ std::string to_string(T value)
 Teapot::Teapot() {
     _loadSuccess = false;
     _verticesNumber = TEAPOT_VERTS.size() / 3;
+    _indicesNumber = TEAPOT_INDICES.size();
     InitShaders();
     setVerts();
     setTexCoords();
@@ -205,7 +206,7 @@ Teapot::Render(glm::mat4 *mvpMat)
     CheckGLError("Teapot: 4");
 
 
-    glDrawElements(GL_TRIANGLES, _verticesNumber * 3, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, _indicesNumber, GL_UNSIGNED_INT, 0);
 
     // Release the buffer.
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -256,7 +257,7 @@ Teapot::setIndices()
     GLuint buffer;
     glGenBuffers(1, &buffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * TEAPOT_INDICES.size(), &TEAPOT_INDICES[0], GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * _indicesNumber, &TEAPOT_INDICES[0], GL_STATIC_DRAW);
    _indBuffer = buffer;
 }
 

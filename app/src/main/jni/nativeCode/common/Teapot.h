@@ -35,6 +35,7 @@ private:
     GLint   _mvLocation, _lightPos, _normalAttribute;
 
     int _verticesNumber;
+    int _indicesNumber;
     GLuint _vBuffer;
     GLuint _uvBuffer;
     GLuint _normalBuffer;
